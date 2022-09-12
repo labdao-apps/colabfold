@@ -31,4 +31,7 @@ RUN conda install -c conda-forge -c bioconda kalign2=2.04 hhsuite=3.3.0
 RUN conda install -c conda-forge openmm=7.5.1 pdbfixer
 
 COPY . .
-CMD ["bash"]
+CMD ["conda", "run", "-n", "colabfold-conda", "/bin/bash", "-c"] 
+# gives JAX error on startup with M1 Macs
+# example call
+# colabfold_batch --cpu /src/test-data/test.fasta /outputs

@@ -1,4 +1,9 @@
-# ColabFold
+# [ColabFold](https://www.nature.com/articles/s41592-022-01488-1)
+
+```
+Mirdita M, Schütze K, Moriwaki Y, Heo L, Ovchinnikov S and Steinegger M. ColabFold: Making protein folding accessible to all.
+Nature Methods (2022) doi: 10.1038/s41592-022-01488-1
+```
 
 ```diff
 + 2022/01/03: The MSA server's faulty hardware from 12/26 was replaced.

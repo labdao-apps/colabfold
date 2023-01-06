@@ -51,7 +51,7 @@ def test_batch(pytestconfig, caplog, tmp_path, prediction_test):
     mock_run_mmseqs = MMseqs2Mock(pytestconfig.rootpath, "batch").mock_run_mmseqs2
     with mock.patch(
         "alphafold.model.model.RunModel.predict",
-        lambda model_runner, feat: mock_run_model.predict(model_runner, feat),
+        lambda model_runner, feat, random_seed: mock_run_model.predict(model_runner, feat, random_seed),
     ), mock.patch("colabfold.colabfold.run_mmseqs2", mock_run_mmseqs):
         run(
             queries,
@@ -63,7 +63,7 @@ def test_batch(pytestconfig, caplog, tmp_path, prediction_test):
         )
 
     messages = [re.sub(r"\d+\.\d+s", "0.0s", i) for i in caplog.messages]
-    assert messages[0:-1] == [
+    expected = [
         "Found 5 citations for tools or databases",
         "Query 1/2: 5AWL_1 (length 10)",
         "Running model_1",
@@ -73,7 +73,10 @@ def test_batch(pytestconfig, caplog, tmp_path, prediction_test):
         "Running model_1",
         "model_1 took 0.0s (3 recycles) with pLDDT 90.8 and ptmscore 0.0394",
         "reranking models by plddt",
+        "Done"
     ]
+    # We can get extra messages through warnings
+    assert set(expected) < set(messages)
 
     # Very simple test, it would be better to check coordinates
     assert (
@@ -104,7 +107,7 @@ def test_zip(pytestconfig, caplog, tmp_path, prediction_test):
     mock_run_mmseqs = MMseqs2Mock(pytestconfig.rootpath, "batch").mock_run_mmseqs2
     with mock.patch(
         "alphafold.model.model.RunModel.predict",
-        lambda model_runner, feat: mock_run_model.predict(model_runner, feat),
+        lambda model_runner, feat, random_seed: mock_run_model.predict(model_runner, feat, random_seed),
     ), mock.patch("colabfold.colabfold.run_mmseqs2", mock_run_mmseqs):
         run(
             queries,
@@ -142,7 +145,7 @@ def test_single_sequence(pytestconfig, caplog, tmp_path, prediction_test):
     mock_run_mmseqs = MMseqs2Mock(pytestconfig.rootpath, "batch").mock_run_mmseqs2
     with mock.patch(
         "alphafold.model.model.RunModel.predict",
-        lambda model_runner, feat: mock_run_model.predict(model_runner, feat),
+        lambda model_runner, feat, random_seed: mock_run_model.predict(model_runner, feat, random_seed),
     ), mock.patch("colabfold.colabfold.run_mmseqs2", mock_run_mmseqs):
         run(
             queries,
@@ -187,7 +190,7 @@ def test_complex(pytestconfig, caplog, tmp_path, prediction_test):
     mock_run_mmseqs2 = MMseqs2Mock(pytestconfig.rootpath, "complex").mock_run_mmseqs2
     with mock.patch(
         "alphafold.model.model.RunModel.predict",
-        lambda model_runner, feat: mock_run_model.predict(model_runner, feat),
+        lambda model_runner, feat, random_seed: mock_run_model.predict(model_runner, feat, random_seed),
     ), mock.patch("colabfold.colabfold.run_mmseqs2", mock_run_mmseqs2):
         run(
             queries,
@@ -221,7 +224,7 @@ def test_complex_ptm(pytestconfig, caplog, tmp_path, prediction_test):
     mock_run_mmseqs2 = MMseqs2Mock(pytestconfig.rootpath, "complex").mock_run_mmseqs2
     with mock.patch(
         "alphafold.model.model.RunModel.predict",
-        lambda model_runner, feat: mock_run_model.predict(model_runner, feat),
+        lambda model_runner, feat, random_seed: mock_run_model.predict(model_runner, feat, random_seed),
     ), mock.patch("colabfold.colabfold.run_mmseqs2", mock_run_mmseqs2):
         run(
             queries,
@@ -256,7 +259,7 @@ def test_complex_monomer_ptm(pytestconfig, caplog, tmp_path, prediction_test):
     ).mock_run_mmseqs2
     with mock.patch(
         "alphafold.model.model.RunModel.predict",
-        lambda model_runner, feat: mock_run_model.predict(model_runner, feat),
+        lambda model_runner, feat, random_seed: mock_run_model.predict(model_runner, feat, random_seed),
     ), mock.patch("colabfold.colabfold.run_mmseqs2", mock_run_mmseqs2):
         run(
             queries,
@@ -291,7 +294,7 @@ def test_complex_monomer(pytestconfig, caplog, tmp_path, prediction_test):
     ).mock_run_mmseqs2
     with mock.patch(
         "alphafold.model.model.RunModel.predict",
-        lambda model_runner, feat: mock_run_model.predict(model_runner, feat),
+        lambda model_runner, feat, random_seed: mock_run_model.predict(model_runner, feat, random_seed),
     ), mock.patch("colabfold.colabfold.run_mmseqs2", mock_run_mmseqs2):
         run(
             queries,

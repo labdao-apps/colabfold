@@ -1,8 +1,15 @@
 # ColabFold
 
 ```diff
-+ 2022/07/13: We have set up a new ColabFold MSA server provided by Korean Bioinformation Center. 
-+             It provides accelerated MSA generation, we updated the UniRef30 to 2022_02 and PDB/PDB70 to 220313.
++ 2022/01/03: The MSA server's faulty hardware from 12/26 was replaced.
++             There were intermittent failures on 12/26 and 1/3. Currently, 
++             there are no known issues. Let us know if you experience any.
++ 2022/10/10: Bugfix: random_seed was not being used for alphafold-multimer.
++             Same structure was returned regardless of defined seed. This
++             has been fixed!
++ 2022/07/13: We have set up a new ColabFold MSA server provided by Korean
++             Bioinformation Center. It provides accelerated MSA generation, 
++             we updated the UniRef30 to 2022_02 and PDB/PDB70 to 220313.
 ```
 <p align="center"><img src="https://github.com/sokrypton/ColabFold/raw/main/.github/ColabFold_Marv_Logo.png" height="250"/></p>
 
@@ -14,10 +21,11 @@
 | [AlphaFold2_batch](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/batch/AlphaFold2_batch.ipynb) | Yes | Yes | Yes | No | Yes | 
 | [RoseTTAFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/RoseTTAFold.ipynb) | Yes | No | Yes | No | No | 
 | [AlphaFold2](https://colab.research.google.com/github/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb) (from Deepmind) | Yes | Yes | No | Yes | No | 
+| [ESMFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/ESMFold.ipynb) | Yes | Maybe | No | No| No |
 ||
 | **BETA (in development) notebooks** | | | | | |
-| [OmegaFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/omegafold.ipynb) | Yes | No | No | No| No |
 | [AlphaFold2_advanced](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/AlphaFold2_advanced.ipynb) | Yes | Yes | Yes | Yes | No |
+| [OmegaFold](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/omegafold.ipynb) | Yes | Maybe | No | No| No |
 ||
 | **OLD retired notebooks** | | | | | |
 | [AlphaFold2_complexes](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_complexes.ipynb) | No | Yes | No | No | No | 
@@ -42,16 +50,34 @@
   - The databases are available at [colabfold.mmseqs.com](https://colabfold.mmseqs.com)
 - I want to render my own images of the predicted structures, how do I color by pLDDT?
   - In pymol for AlphaFold structures: `spectrum b, red_yellow_green_cyan_blue, minimum=50, maximum=90`
+  - If you want to use AlphaFold Colours (credit: Konstantin Korotkov)
+    ```python
+    set_color n0, [0.051, 0.341, 0.827]
+    set_color n1, [0.416, 0.796, 0.945]
+    set_color n2, [0.996, 0.851, 0.212]
+    set_color n3, [0.992, 0.490, 0.302]
+    color n0, b < 100; color n1, b < 90
+    color n2, b < 70;  color n3, b < 50
+    ```
   - In pymol for RoseTTAFold structures: `spectrum b, red_yellow_green_cyan_blue, minimum=0.5, maximum=0.9`
 - What is the difference between the AlphaFold2_advanced and AlphaFold2_mmseqs2 (_batch) notebook for complex prediction? 
   - We currently have two different ways to predict protein complexes: (1) using the AlphaFold2 model with residue index jump and (2) using the AlphaFold2-multimer model. AlphaFold2_advanced supports (1) and AlphaFold2_mmseqs2 (_batch) (2).
 - What is the difference between localcolabfold and the pip installable colabfold_batch?
-  -  localcolabfold is a command line interface for our advanced notebooks. pip is a command line version of the alphafold_mmseqs2 and alphafold_batch notebook.
+  -  [LocalColabFold](https://github.com/YoshitakaMo/localcolabfold) is an installer script designed to make ColabFold functionality available on local users' machines. It supports wide range of operating systems, such as Windows 10 or later (using Windows Subsystem for Linux 2), macOS, and Linux.
+- Is there a way to amber-relax structures without having to rerun alphafold/colabfold from scratch?
+  - Yes, see this [notebook](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/beta/relax_amber.ipynb).
 
 
 ### Running locally
 
 _Note: Checkout [localcolabfold](https://github.com/YoshitakaMo/localcolabfold) too
+
+It is recommended that you create a conda environment with python version 3.7. If you use a newer python version, you might run into problems when installing tensorflow, as the required version may not be found.
+
+```shell
+conda create --name my_colabfold python=3.7
+```
+Then activate it with `activate my_colabfold`.
 
 Install ColabFold using the `pip` commands below. `pip` will resolve and install all required dependencies and ColabFold should be ready within a few minutes to use. Please check the [JAX documentation](https://github.com/google/jax#pip-installation-gpu-cuda) for how to get JAX to work on your GPU or TPU.
 
